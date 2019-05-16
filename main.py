@@ -63,7 +63,7 @@ def main():
             elif event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
                     co = {"Active": "No"}
-                    r = requests.post(url = SERVER_IP + "/sendcoords", data = json.dumps(co))
+                    r = requests.post(url = SERVER_IP + "/pQuit", data = json.dumps(co))
                     pygame.quit()
                     sys.exit()
                 elif event.key == K_DOWN:
@@ -119,22 +119,19 @@ def main():
             if event.type == KEYDOWN:
                 player1.controls(event.key)
         win.setscreencolors(None, 'black', clear=True)
-        #win.colors=('yellow','black')
-        #win.fill('@', region = (player1.xl, player1.yl,1,1))
         co = {"Xl": player1.xl, "Yl": player1.yl}
         r = requests.post(url = SERVER_IP + "/sendcoords", data = json.dumps(co))
         
         r = requests.get(url = SERVER_IP + "/recvcoords")
         l = r.json() 
         #msg = json.dumps({"Xl": player1.xl, "Yl": player1.yl, "Xg": player1.xg, "Yg": player1.yg}, sort_keys=True)
-        #s.sendall(msg.encode('utf-8'))
+
         for player in l:
             print(l[player])
             if l[player]["Active"] == 'Y':
                 print(l[player])
                 win.colors=('yellow','black')
                 win.putchar('@', x = l[player]["Xl"], y = l[player]["Yl"])
-                win.update()
             else: pass
         win.update()
 if __name__ == '__main__':
