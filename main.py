@@ -34,6 +34,9 @@ class Player:
 
     def controls(self, k):
         if k == K_ESCAPE:
+            co = {"Active": "No"}
+            print(json.dumps(co))
+            r = requests.post(url = SERVER_IP + "/pQuit", data = json.dumps(co))
             pygame.quit()
             sys.exit()
         elif k == K_UP:
@@ -62,8 +65,6 @@ def main():
 
             elif event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
-                    co = {"Active": "No"}
-                    r = requests.post(url = SERVER_IP + "/pQuit", data = json.dumps(co))
                     pygame.quit()
                     sys.exit()
                 elif event.key == K_DOWN:
@@ -103,7 +104,7 @@ def main():
         r = requests.post(url = SERVER_IP, data = "/") 
         r = requests.get(url = SERVER_IP + "/setup") 
         l = r.json()
-        print(l)
+        #print(l)
         player1 = Player()
         win.colors=('black','black')
         win.fill('#',region=(0,0,width,height))
@@ -127,9 +128,9 @@ def main():
         #msg = json.dumps({"Xl": player1.xl, "Yl": player1.yl, "Xg": player1.xg, "Yg": player1.yg}, sort_keys=True)
 
         for player in l:
-            print(l[player])
+            #print(l[player])
             if l[player]["Active"] == 'Y':
-                print(l[player])
+                #print(l[player])
                 win.colors=('yellow','black')
                 win.putchar('@', x = l[player]["Xl"], y = l[player]["Yl"])
             else: pass
