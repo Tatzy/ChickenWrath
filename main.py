@@ -5,7 +5,7 @@ from pygame.locals import *
 ## Screen Size specification stuff
 width = 60
 height = 30
-SERVER_IP = "http://25.15.222.121:8000"
+SERVER_IP = "http://127.0.0.1:8000"
 
 ## Menu Screen Setup
 win = pygcurse.PygcurseWindow(width,height, fullscreen = False, caption = 'Chicken Wrath')
@@ -15,7 +15,7 @@ win.write('Chicken Wrath')
 win.colors = ('green','green')
 win.fill('#', region=(0, 0, 1, 30))
 win.fill('#', region=(59, 0, 1, 30))
-win.cursor = (28,16)#
+win.cursor = (28,16)
 win.colors = ('red','gray')
 win.write('Play')
 win.cursor = (28,18)
@@ -62,6 +62,8 @@ def main():
 
             elif event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
+                    co = {"Active": "No"}
+                    r = requests.post(url = SERVER_IP + "/sendcoords", data = json.dumps(co))
                     pygame.quit()
                     sys.exit()
                 elif event.key == K_DOWN:
@@ -127,12 +129,12 @@ def main():
         #msg = json.dumps({"Xl": player1.xl, "Yl": player1.yl, "Xg": player1.xg, "Yg": player1.yg}, sort_keys=True)
         #s.sendall(msg.encode('utf-8'))
         for player in l:
-            print(l[player]['Active'])
+            print(l[player])
             if l[player]["Active"] == 'Y':
                 print(l[player])
                 win.colors=('yellow','black')
                 win.putchar('@', x = l[player]["Xl"], y = l[player]["Yl"])
-                #win.update()
+                win.update()
             else: pass
         win.update()
 if __name__ == '__main__':
