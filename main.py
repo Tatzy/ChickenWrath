@@ -1,4 +1,4 @@
-import pygcurse, pygame, sys
+import pygcurse, pygame, sys, socket
 from pygame.locals import *
 width = 60
 height = 30
@@ -18,6 +18,19 @@ win.cursor = (28,18)
 win.colors = ('green','black')
 win.write('Exit')
 win.update()
+
+class Player:
+    def __init__(self):
+        pass
+
+    def controls(self, k):
+        if k == K_ESCAPE:
+            pygame.quit()
+            sys.exit()
+        else:
+            pass
+
+
 
 def main():
     menu = True
@@ -63,8 +76,20 @@ def main():
                 win.colors = ('red', 'gray')
                 win.write('Exit')
                 win.update()
+    
+    if gameStart == True:
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.connect(('127.0.0.1', 5000))
+        player1 = Player()
+        win.colors=('black','black')
+        win.fill('#',region=(0,0,width,height))
+        msg = s.recv(1024)                                     
+        print(msg.decode('utf-8')) 
+    
     while gameStart:
-        pass
+        for event in pygame.event.get():
+            if event.type == KEYDOWN:
+                player1.controls(event.key)
 
 if __name__ == '__main__':
     main()
