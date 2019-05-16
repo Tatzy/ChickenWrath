@@ -1,10 +1,11 @@
-import pygcurse, pygame, sys, socket, json
+import pygcurse, pygame, sys, socket, json, requests
 from io import StringIO
 from pygame.locals import *
 
 ## Screen Size specification stuff
 width = 60
 height = 30
+SERVER_IP = "http://127.0.0.1:8000"
 
 ## Menu Screen Setup
 win = pygcurse.PygcurseWindow(width,height, fullscreen = False, caption = 'Chicken Wrath')
@@ -51,6 +52,7 @@ class Player:
 def main():
     menu = True
     key = 0
+    global s
     while menu:
 
         for event in pygame.event.get():
@@ -95,16 +97,15 @@ def main():
     
     ## Initialize the Game
     if gameStart == True:
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.connect(('127.0.0.1', 5000))
+
+        r = requests.post(url = SERVER_IP, data = "/") 
+        r = requests.get(url = SERVER_IP + "/setup") 
+        l = r.json()
+        print(l)
         player1 = Player()
         win.colors=('black','black')
         win.fill('#',region=(0,0,width,height))
-        msg = s.recv(1024)
-        my_json = msg.decode('utf8').replace("'", '"')
-        data = json.loads(my_json)
-        s = json.dumps(data, indent=4, sort_keys=True)                               
-        l = json.loads(s)
+
         player1.xl = l["Xl"]
         player1.yl = l["Yl"]
         win.colors= ('yellow','black')
@@ -119,7 +120,11 @@ def main():
         win.fill('#',region=(0,0,width,height))
         win.colors=('yellow','black')
         win.fill('@', region = (player1.xl, player1.yl,1,1))
+        co = {"Xl": player1.xl, "Yl": player1.yl}
+        r = requests.post(url = "http://127.0.0.1:8000/coords", data = json.dumps(co))
         win.update()
+        #msg = json.dumps({"Xl": player1.xl, "Yl": player1.yl, "Xg": player1.xg, "Yg": player1.yg}, sort_keys=True)
+        #s.sendall(msg.encode('utf-8'))
 
 
 if __name__ == '__main__':
